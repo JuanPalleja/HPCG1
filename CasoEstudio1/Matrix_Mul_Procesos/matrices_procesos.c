@@ -30,7 +30,7 @@ void printMatrix(int **matrix, int N) {
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        printf("Usage: %s <matrix_size> <num_processes>\n", argv[0]);
+        // printf("Usage: %s <matrix_size> <num_processes>\n", argv[0]);
         return 1;  // Exit with an error code
     }
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
     // Check for valid input
     if (N <= 0 || numProcesses <= 0) {
-        printf("Invalid input. N and num_processes should be greater than 0.\n");
+        // printf("Invalid input. N and num_processes should be greater than 0.\n");
         return 1;  // Exit with an error code
     }
 
@@ -69,6 +69,10 @@ int main(int argc, char *argv[]) {
         result[i] = mmap(NULL, N * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     }
 
+    //Result times
+    int *resultTimes = mmap(NULL, numProcesses * sizeof(double *), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+
     // Measure the start time
     clock_t begin = clock();
 
@@ -80,11 +84,15 @@ int main(int argc, char *argv[]) {
             int startRow = i * (N / numProcesses);
             int endRow = (i == numProcesses - 1) ? N : (i + 1) * (N / numProcesses);
 
+            clock_t beginForkChildTime = clock();
             multiplyMatrices(matrixA, matrixB, result, startRow, endRow, N);
+            clock_t endForkChildTime = clock();
+            double time_spent_fork_child = ((double)(endForkChildTime - beginForkChildTime) / CLOCKS_PER_SEC)*1000;
+            resultTimes[i] = time_spent_fork_child;
 
             exit(0);  // Exit child process
         } else if (pid < 0) {  // Error handling
-            perror("Error in fork");
+            // perror("Error in fork");
             return 1;
         }
     }
@@ -100,7 +108,27 @@ int main(int argc, char *argv[]) {
     double time_spent = ((double)(end - begin) / CLOCKS_PER_SEC)*1000;
 
     // Display the elapsed time
-    printf("%f;%d;%d\n", time_spent, N, numProcesses);
+    // printf("Time: %f ms. N: %i. P: %i\n", time_spent,N,numProcesses);
+
+    // printf("Hijooooos  -------------------------- \n");
+
+    double max_value = 0.0;
+
+    for(int i = 0; i < numProcesses; ++i) {
+        double time_spent_child = resultTimes[i];
+        // printf("Time: %f ms. Child %i.\n", time_spent_child,i);
+
+        if(time_spent_child > max_value)
+            max_value = time_spent_child;
+    }
+
+    // printf("max Time: %f ms. \n", max_value );
+    double total_time = max_value + time_spent;
+    // printf("total time: %f ms. \n", total_time);
+
+    // printf("tiempoTotal;N;P");
+
+    printf("%f;%d;%d\n", total_time, N, numProcesses);
 
     /*
     // Display the input matrices

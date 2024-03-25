@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compile the C program
-gcc matrices_secuencial_opt_compilacion.c -o test
+gcc -O2 matrices_secuencial_opt_compilacion.c -o test
 
 # Specify the output file
 output_file="resultado_matrices_secuencial_opt_compilacion.txt"

@@ -2,103 +2,117 @@
 #include <stdlib.h>
 #include <time.h>
 
-void multiplyMatrices(int **A, int **B, int **result, int N) {
-    int i, j, k;
-
-    for (i = 0; i < N; ++i) {
-        for (j = 0; j < N; ++j) {
-            result[i][j] = 0;
-            for (k = 0; k < N; ++k) {
-                result[i][j] += A[i][k] * B[k][j];
-            }
-        }
-    }
+// Función para generar números aleatorios entre 1 y 5
+int generarNumeroAleatorio()
+{
+    return rand() % 5 + 1;
 }
 
-// Function to print a matrix
-void printMatrix(int **matrix, int N) {
-    int i, j;
-    for (i = 0; i < N; ++i) {
-        for (j = 0; j < N; ++j) {
-            printf("%d ", matrix[i][j]);
+// Función para imprimir una matriz
+void imprimirMatriz(int **matriz, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%d ", matriz[i][j]);
         }
         printf("\n");
     }
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Usage: %s <matrix_size>\n", argv[0]);
-        return 1;  // Exit with an error code
+// Función para multiplicar dos matrices cuadradas
+void multiplicarMatrices(int **matrizA, int **matrizB, int **resultado, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            resultado[i][j] = 0;
+            for (int k = 0; k < n; k++)
+            {
+                resultado[i][j] += matrizA[i][k] * matrizB[j][k];
+            }
+        }
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    // Verificar si se proporcionó el valor de n como argumento
+    if (argc != 2)
+    {
+        printf("Uso: %s <valor_de_n>\n", argv[0]);
+        return 1;
     }
 
-    int N = atoi(argv[1]);
+    // Obtener el valor de n desde el argumento de línea de comandos
+    int n = atoi(argv[1]);
 
-    // Check for valid input
-    if (N <= 0) {
-        printf("Invalid input. N should be greater than 0.\n");
-        return 1;  // Exit with an error code
-    }
-
-    // Seed the random number generator
+    // Inicializar la semilla para generar números aleatorios
     srand(time(NULL));
 
-    // Dynamically allocate memory for matrices
-    int **matrixA, **matrixB, **result;
-    matrixA = (int **)malloc(N * sizeof(int *));
-    matrixB = (int **)malloc(N * sizeof(int *));
-    result = (int **)malloc(N * sizeof(int *));
-    for (int i = 0; i < N; ++i) {
-        matrixA[i] = (int *)malloc(N * sizeof(int));
-        matrixB[i] = (int *)malloc(N * sizeof(int));
-        result[i] = (int *)malloc(N * sizeof(int));
+    // Crear matrices y reservar memoria dinámica
+    int **matrizA, **matrizB, **resultado;
+    matrizA = (int **)malloc(n * sizeof(int *));
+    matrizB = (int **)malloc(n * sizeof(int *));
+    resultado = (int **)malloc(n * sizeof(int *));
+
+    for (int i = 0; i < n; i++)
+    {
+        matrizA[i] = (int *)malloc(n * sizeof(int));
+        matrizB[i] = (int *)malloc(n * sizeof(int));
+        resultado[i] = (int *)malloc(n * sizeof(int));
     }
 
-    // Fill matrices A and B with random numbers between 1 and 9
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            matrixA[i][j] = rand() % 9 + 1;  // Random number between 1 and 9
-            matrixB[i][j] = rand() % 9 + 1;  // Random number between 1 and 9
+    // Inicializar las matrices con valores aleatorios
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            matrizA[i][j] = generarNumeroAleatorio();
+            matrizB[i][j] = generarNumeroAleatorio();
         }
     }
 
-    // Measure the start time
-    clock_t begin = clock();
+    // Imprimir las matrices originales
+    // printf("Matriz A:\n");
+    // imprimirMatriz(matrizA, n);
 
-    // Multiply matrices A and B
-    multiplyMatrices(matrixA, matrixB, result, N);
+    // printf("\nMatriz B:\n");
+    // imprimirMatriz(matrizB, n);
 
-    clock_t end = clock();
+    // Medir el tiempo antes de ejecutar la función de multiplicación
+    clock_t inicio = clock();
 
-    // Calculate the elapsed time
-    double time_spent = ((double)(end - begin) / CLOCKS_PER_SEC)*1000;
+    // Multiplicar las matrices y almacenar el resultado en la matriz resultado
+    multiplicarMatrices(matrizA, matrizB, resultado, n);
 
+    // Medir el tiempo después de ejecutar la función de multiplicación
+    clock_t fin = clock();
 
-    /*
-    // Display the input matrices
-    printf("Matrix A:\n");
-    printMatrix(matrixA, N);
+    // Calcular el tiempo transcurrido
+    double tiempo_transcurrido = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+    tiempo_transcurrido = tiempo_transcurrido * 1000; // convertir a milisegundos
 
-    printf("\nMatrix B:\n");
-    printMatrix(matrixB, N);
+    // Imprimir la matriz resultante
+    // printf("\nMatriz Resultado:\n");
+    // imprimirMatriz(resultado, n);
 
-    // Display the result
-    printf("\nResultant matrix after multiplication:\n");
-    printMatrix(result, N);
-    **/
+    // Imprimir el tiempo de ejecución
+    // printf("\nTiempo de ejecucion: %.6f milisegundos para N=%i\n", tiempo_transcurrido, n);
+    printf("%f,%d\n", tiempo_transcurrido, n);
 
-    // Display the elapsed time
-    printf("Time: %f ms. N: %i\n", time_spent,N);
-
-    // Free dynamically allocated memory
-    for (int i = 0; i < N; ++i) {
-        free(matrixA[i]);
-        free(matrixB[i]);
-        free(result[i]);
+    // Liberar la memoria
+    for (int i = 0; i < n; i++)
+    {
+        free(matrizA[i]);
+        free(matrizB[i]);
+        free(resultado[i]);
     }
-    free(matrixA);
-    free(matrixB);
-    free(result);
+    free(matrizA);
+    free(matrizB);
+    free(resultado);
 
     return 0;
 }
