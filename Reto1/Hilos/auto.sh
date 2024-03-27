@@ -9,7 +9,7 @@ output_file="resultado_jacobi1d_hilos.txt"
 > $output_file
 
 # Loop to run the program multiple times 
-for h in 1 2 4 8 12 1000
+for h in 1 2 4 8 12
 do
     for n in 100000
     do
