@@ -8,4 +8,5 @@ ulimit -s unlimited -c unlimited
 
 N=1000000
 NSTEPS=10000
-./test $N $NSTEPS u_serial.out > timing_serial.out
+H=4 
+./test $N $NSTEPS $H u_serial.out > timing_serial.out
