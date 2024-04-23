@@ -16,7 +16,7 @@ do
         echo "Matrix size: $matrix_size. T: $num_threads"
 
         # Run the program 5 times
-        for run in {1..10}
+        for run in {1..5}
         do
             echo "   Run $run"
             ./test $matrix_size $num_threads >> $output_file
