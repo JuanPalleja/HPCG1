@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
                          (end.tv_usec - start.tv_usec) / 1000.0);
 
     // Display the elapsed time
-    printf("Time: %f ms. N: %i\n", time_spent, N);
+    printf("%d,%f,%i\n",numThreads, time_spent, N);
 
 
     //printMatrix(matrixA,N);
