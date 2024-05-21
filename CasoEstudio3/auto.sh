@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Compile the C program
-gcc matrices_secuencial.c -o test
-
 # Specify the output file
-output_file="resultado_secuencial.csv"
+output_file="resultado_mpi.csv"
 
 > $output_file
 
@@ -17,7 +14,7 @@ do
     for run in {1..5}
     do
         echo "   Run $run"
-        ./test $matrix_size >> $output_file
+        mpiexec -hosts head,wn1,wn2,wn3 ./exe $matrix_size >> $output_file
     done
 done
 
